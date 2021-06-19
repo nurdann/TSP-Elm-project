@@ -2,9 +2,16 @@
 
 ## How to run
 
+Install dependencies,
 ```
 $ npm install
 $ elm install PaackEng/elm-google-maps
+```
+
+Run the application with Google Map API key,
+
+```
+$ ELM_APP_GOOGLE_MAP_KEY='key' elm-app start
 ```
 
 ## Install
@@ -31,9 +38,10 @@ Then launch the application
 elm reactor
 ```
 
-Launch interactive shell
+Launch interactive shell, then an `.elm` file can be loaded as a module
 ```
-elm repl
+$ elm repl
+> import TSPalgorithms exposing (..)
 ```
 
 Initialize project
@@ -104,3 +112,41 @@ I have attempted using `elm-canvas` package but the resulting `<canvas>` did not
 We will use Google Maps API instead. For that, we need to get google API key. Follow [this to enable API](https://developers.google.com/maps/gmp-get-started#enable-api-sdk) and [enable billing](https://console.cloud.google.com/projectselector2/billing/enable)
 
 Install elm package for Google Maps from [github](https://github.com/PaackEng/elm-google-maps/tree/2.1.0)
+
+To get input from user, we need to define message types that track changes to input fields
+
+``` elm
+type Msg 
+    = Coordinates 
+    | LatitudeInput String
+    | LongitudeInput String
+```
+
+
+Then trigger them via event handlers
+
+``` elm
+input [placeholder "Enter latitude...", onInput LatitudeInput] [],
+input [placeholder "Enter longitude...", onInput LongitudeInput] [],
+button [onClick Coordinates] [text "Add point"]
+...
+```
+
+The `update` function handles events. From there we can check which event is being triggered. In our case, the inputs are converted to `Float`s if the conversions success otherwise the wildcard `_` catches other instances. In `elm`, pattern matching must cover all cases otherwise it will not compile. 
+
+We can make use of `model` to access of its members similar to JS object and compute new coordinate path,
+
+``` elm
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+    case msg of
+        LatitudeInput lat -> ({model | latitudeInput = lat}, Cmd.none)
+        LongitudeInput lng -> ({model | longitudeInput = lng}, Cmd.none)
+        Coordinates -> (case (String.toFloat model.latitudeInput, String.toFloat model.longitudeInput) of
+                            (Just lat, Just lng) ->  
+                                let optimized = nearestNeighbour (List.append model.coordinates [(lat, lng)])
+                                in {model | coordinates = optimized}
+                            _ -> model
+                            , Cmd.none)
+```
+
