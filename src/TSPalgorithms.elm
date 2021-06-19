@@ -22,15 +22,6 @@ permutations list =
         [] -> [[]]
         (x :: xs) -> List.concatMap (rotations << ((::) x)) (permutations xs)
                        
-data : List (Float, Float)
-data = [
- (1, 1),
- (2, 230),
- (3, 4),
- (5, 6),
- (3, 200)
- ]
-
 pairListItems : List a -> List (a, a)
 pairListItems list =
     let pairConsec list1 list2 pairs = 
@@ -92,4 +83,19 @@ removeMatching list val =
                 (x :: xs) -> if x == val then List.reverse accLeft ++ xs
                              else removeAcc xs (x :: accLeft)
                 [] -> List.reverse accLeft
-    in log ("before: " ++ toString list ++ " after: " ++ toString (removeAcc list [])) removeAcc list []
+    in removeAcc list []
+
+
+data0 = [
+ (1, 1),
+ (2, 230),
+ (3, 4),
+ (5, 6),
+ (3, 200)
+ ]
+
+data1 = [(49.2270476,-122.9751678),(49.283964,-122.8928987),(49.283964,-122.89),(49.283964,-122.8),(49.283964,-122.78),(49.284,-122.77),(49.28,-122.78),(49,-122.76),(49.3,-122.788)]
+
+example0 = nearestNeighbour data0
+example1 = nearestNeighbour data1
+opt1 = optimal data1
