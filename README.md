@@ -14,7 +14,9 @@ Run the application with Google Map API key,
 $ ELM_APP_GOOGLE_MAP_KEY='key' elm-app start
 ```
 
-## Install
+Currently, the application can only run in development mode because there is no backend for Google Map API requests.
+
+## Below is the walkthrough as I implemented the Elm application
 
 ```
 npm install -g elm
@@ -44,7 +46,7 @@ $ elm repl
 > import TSPalgorithms exposing (..)
 ```
 
-Initialize project
+Later, I Initialized project with `elm-app` in order to pass environment variable
 
 ```
 $ create-elm-app project
