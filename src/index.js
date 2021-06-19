@@ -1,6 +1,8 @@
 import './main.css';
 import { Elm } from './Main.elm';
 import * as serviceWorker from './serviceWorker';
+import '@webcomponents/webcomponentsjs/custom-elements-es5-adapter';
+import '@google-web-components/google-map';
 
 Elm.Main.init({
   node: document.getElementById('root'),

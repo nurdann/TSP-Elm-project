@@ -1,56 +1,81 @@
+-- Used as a guide
+-- source: https://github.com/PaackEng/elm-google-maps/blob/2.1.0/examples/src/Main.elm
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, text, div, h1, img)
-import Html.Attributes exposing (src)
-
-
----- MODEL ----
-
+import GoogleMaps.Map as Map
+import GoogleMaps.Marker as Marker exposing (Marker)
+import GoogleMaps.Polygon as Polygon exposing (Polygon)
+import Html exposing (Html, button, div, h1, text, input)
+import Html.Attributes exposing (src, style, class, placeholder)
+import Html.Events exposing (onClick, onInput)
+import Debug exposing (toString, log)
 
 type alias Model =
-    {}
+    {
+    mapType : Map.MapType,
+    googleMapKey : String,
+    coordinates : List (Float, Float)
+    }
+
+init : String -> (Model, Cmd Msg)
+init key =
+    ({
+    mapType = Map.roadmap,
+    googleMapKey = key,
+    coordinates =  
+        [ (49.2270476,-122.9751678),
+          (49.283964,-122.8928987)
+        ]
+    }, Cmd.none)
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( {}, Cmd.none )
+type Msg 
+    = DrawCoordinates (List (Float, Float))
 
-
-
----- UPDATE ----
-
-
-type Msg
-    = NoOp
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        _ -> (model, Cmd.none)
 
+googleMapView : Model -> Html Msg
+googleMapView {mapType, googleMapKey, coordinates} =
+    Map.init googleMapKey
+        |> Map.withMapType mapType
+        |> Map.withDefaultUIControls False
+        |> Map.withFitToMarkers True -- fit all markers in a map
+        |> Map.withMarkers (markers coordinates)
+        --|> Map.withCenter 49.283964 -122.8928987
+        |> Map.withPolygons [tracePath coordinates]
+        |> Map.toHtml
 
+markers : List (Float, Float) -> List (Marker Msg)
+markers coordinates = List.map (\(lat, lng) -> Marker.init lat lng) coordinates
 
----- VIEW ----
-
+tracePath : List (Float, Float) -> Polygon Msg
+tracePath coordinates = 
+    Polygon.init coordinates
+        |> Polygon.withStrokeColor "black"
+        |> Polygon.withClosedMode
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ img [ src "/logo.svg" ] []
-        , h1 [] [ text "Your Elm App is working!" ]
+    let d0 = 0
+    in div [class "map-container", style "height" "400px"]
+        [
+        googleMapView model,
+        input [placeholder "Enter latitude...", onInput ] [],
+        input [placeholder "Enter longitude..."] [],
+        button [onClick AddCoordinate] [text "Add point"],
+        div [] [text (toString model.coordinates) ]
         ]
 
-
-
----- PROGRAM ----
-
-
-main : Program () Model Msg
+main : Program String Model Msg
 main =
     Browser.element
-        { view = view
-        , init = \_ -> init
-        , update = update
-        , subscriptions = always Sub.none
+        {
+            view = view,
+            init = init,
+            update = update,
+            subscriptions = always Sub.none
         }
