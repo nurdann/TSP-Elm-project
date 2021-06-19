@@ -109,8 +109,8 @@ The Nearest neighbour algorithms choose a random starting point and travels to t
 
 Below, we can see the comparison between optimal and greedy approach. Greedy approach using nearest neighbour finds solution in polynomial time but it can be far from the optimal solution.
 
-![Brute force](img/optimal.png | width=100) 
-![Nearest Neighbour](img/greedy.png | width=100)
+![Brute force](img/optimal.png) 
+![Nearest Neighbour](img/greedy.png)
 
 ## Drawing the coordinate path
 
