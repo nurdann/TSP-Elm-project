@@ -15,7 +15,9 @@ type alias Model =
     {
     mapType : Map.MapType,
     googleMapKey : String,
-    coordinates : List (Float, Float)
+    coordinates : List (Float, Float),
+    latitudeInput : String,
+    longitudeInput : String
     }
 
 init : String -> (Model, Cmd Msg)
@@ -26,17 +28,28 @@ init key =
     coordinates =  
         [ (49.2270476,-122.9751678),
           (49.283964,-122.8928987)
-        ]
+        ],
+    latitudeInput = "",
+    longitudeInput = ""
     }, Cmd.none)
 
 
 type Msg 
-    = DrawCoordinates (List (Float, Float))
+    = Coordinates 
+    | LatitudeInput String
+    | LongitudeInput String
+
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-        _ -> (model, Cmd.none)
+        LatitudeInput lat -> ({model | latitudeInput = lat}, Cmd.none)
+        LongitudeInput lng -> ({model | longitudeInput = lng}, Cmd.none)
+        Coordinates -> (
+                        case (String.toFloat model.latitudeInput, String.toFloat model.longitudeInput) of
+                            (Just lat, Just lng) -> {model | coordinates = List.append model.coordinates [(lat, lng)]}
+                            _ -> model
+                            , Cmd.none)
 
 googleMapView : Model -> Html Msg
 googleMapView {mapType, googleMapKey, coordinates} =
@@ -64,9 +77,9 @@ view model =
     in div [class "map-container", style "height" "400px"]
         [
         googleMapView model,
-        input [placeholder "Enter latitude...", onInput ] [],
-        input [placeholder "Enter longitude..."] [],
-        button [onClick AddCoordinate] [text "Add point"],
+        input [placeholder "Enter latitude...", onInput LatitudeInput] [],
+        input [placeholder "Enter longitude...", onInput LongitudeInput] [],
+        button [onClick Coordinates] [text "Add point"],
         div [] [text (toString model.coordinates) ]
         ]
 
