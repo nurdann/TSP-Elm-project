@@ -1,9 +1,12 @@
 module TSPalgorithms exposing (..)
 import Debug exposing (log, toString)
+import Set exposing (Set)
 
 -- Pythagorean theorem
 distance: (Float, Float) -> (Float, Float) -> Float
 distance (x1, y1) (x2, y2) = ((x2 - x1)^2 + (y2 - y1)^2)^0.5
+
+distanceTuple (p1, p2) = distance p1 p2
 
 -- source: https://stackoverflow.com/a/43507769
 rotations : List a -> List (List a)
@@ -85,6 +88,8 @@ removeMatching list val =
                 [] -> List.reverse accLeft
     in removeAcc list []
 
+        
+-- Examples        
 
 data0 = [
  (1, 1),
@@ -99,3 +104,78 @@ data1 = [(49.2270476,-122.9751678),(49.283964,-122.8928987),(49.283964,-122.89),
 example0 = nearestNeighbour data0
 example1 = nearestNeighbour data1
 opt1 = optimal data1
+
+
+--       
+-- Implement Kruskal algorithm
+--
+
+-- Union-Find datastructure
+-- Extract the set that has the matching coordinate and the list without the set
+findDisjointSetTupleAcc : comparable -> List (Set comparable) -> List (Set comparable) -> (Set comparable, List (Set comparable))
+findDisjointSetTupleAcc point list leftSets =
+    case list of
+        (set :: sets) -> if Set.member point set then (set, List.reverse leftSets ++ sets)
+                         else findDisjointSetTupleAcc point sets (set :: leftSets)
+        [] -> (Set.empty, leftSets)
+
+findDisjointSetTuple point list = findDisjointSetTupleAcc point list []
+
+inTheSameDisjointSet : comparable -> comparable -> List (Set comparable) -> Bool
+inTheSameDisjointSet p q sets =
+    let (pSet, _) = findDisjointSetTuple p sets
+    in Set.member q pSet                     
+                                  
+-- Extract two sets that contain the corresponding two coordinates
+-- then merge them together and insert to list.
+-- If both of them are in the same set, no need to merge
+unionDisjointSets : comparable -> comparable -> List (Set comparable) -> List (Set comparable)
+unionDisjointSets p q list =
+    let (pSet, list_no_p) = findDisjointSetTuple p list
+        (qSet, list_no_pq) = findDisjointSetTuple q list_no_p
+    in if Set.member q pSet then (pSet :: list_no_p)
+       else (Set.union pSet qSet :: list_no_pq)
+    
+-- Examples
+
+set0 = Set.fromList data0
+set1 = Set.insert (2,3) set0
+disjointSets0 = [Set.empty, set0, set1]       
+findSet0 = findDisjointSetTuple (1,1) disjointSets0
+findSet1 = findDisjointSetTuple (2,3) disjointSets0          
+union0 = unionDisjointSets (1,1) (2,3) disjointSets0   
+    
+
+type alias Node = (Float, Float)
+type alias Edge = (Node, Node)
+
+edgesForCompleteGraph : List a -> List (a, a)
+edgesForCompleteGraph list =
+    let getPairs list0 firstPair = List.map (\secondPair -> (firstPair, secondPair)) list0
+        recurseGetPairs list1 leftList =
+            case (list1) of
+                (x :: xs) -> List.append (getPairs (leftList ++ xs) x) (recurseGetPairs xs (leftList ++ [x]))
+                [] -> []
+    in recurseGetPairs list []
+        
+-- Kruskal's algorithm for finding minimum spanning tree
+-- source: https://en.wikipedia.org/wiki/Kruskal%27s_algorithm#Pseudocode
+
+-- Assume elements in node and edge lists are unique
+minSpanTree : List Node -> List Edge -> List Edge
+minSpanTree nodes edges =
+    let orderedEdges = List.sortBy distanceTuple edges
+        disjointSets = List.map Set.singleton nodes
+        iterateEdges edges0 sets minSpan =
+            case edges0 of
+                ((u, v) :: es) ->
+                    if not (inTheSameDisjointSet u v sets)
+                    then iterateEdges es (unionDisjointSets u v sets)  ((u, v) :: minSpan)
+                    else iterateEdges es sets minSpan
+                [] -> minSpan
+    in iterateEdges orderedEdges disjointSets []
+
+-- Examples
+data2 = [(0,0), (4,0), (3,1), (2,5)]
+edges2 = edgesForCompleteGraph data2
+exmspan0 = minSpanTree data2 edges2
