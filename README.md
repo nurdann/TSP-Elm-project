@@ -22,7 +22,7 @@ Currently, the application can only run in development mode because there is no 
 
 Setting up Elm was not difficult, however details such as passing environment variables and drawing on canvas took me considerable time. In order to use transpiled `.elm` files, I would need to setup backend API so that it does not expose Google Map Api key. Initially, I have attempted to draw coordinates on a HTML canvas but I could not get `elm-canvas` to draw on canvas even with their provided examples.
 
-The algorithm used Nearest Neighbour with the first coordinate point in a list being the starting position. Additional improvement would be use is Nearest Fragment but the approach can still result in suboptimal solutions. I have attempted to implement Christofides and Serdyukov algorithm but got stuck on finding minimum-weight perfect matching which would take me much more considerable time to understand and implement it.
+The algorithm used is Nearest Neighbour with the first coordinate point in a list being the starting position. Additional improvement would be use is Nearest Fragment but the approach can still result in suboptimal solutions. I have attempted to implement Christofides and Serdyukov algorithm but got stuck on finding minimum-weight perfect matching which would take me much more considerable time to understand and implement it.
 
 The distance is measured in terms of Euclidean distance which assumes that points are on the same plane. So better approach would be to calculate distance using haversine algorithm
 
