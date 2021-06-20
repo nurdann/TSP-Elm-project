@@ -5,13 +5,12 @@
 Install dependencies,
 ```
 $ npm install
-$ elm install PaackEng/elm-google-maps
 ```
 
 Run the application with Google Map API key,
 
 ```
-$ ELM_APP_GOOGLE_MAP_KEY='key' elm-app start
+$ ELM_APP_GOOGLE_MAP_KEY='key' ./node_modules/.bin/elm-app start
 ```
 
 Currently, the application can only run in development mode because there is no backend for Google Map API requests.
