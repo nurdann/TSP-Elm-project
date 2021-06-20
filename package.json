@@ -2,6 +2,6 @@
   "devDependencies": {
     "@google-web-components/google-map": "github:PaackEng/google-map#v3.0.0",
     "@webcomponents/webcomponentsjs": "^2.5.0",
-    "elm": "^0.19.1-5"
+    "create-elm-app": "^5.22.0"
   }
 }
