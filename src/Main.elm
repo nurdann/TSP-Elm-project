@@ -73,6 +73,7 @@ googleMapView {mapType, googleMapKey, coordinates} =
 markers : List (Float, Float) -> List (Marker Msg)
 markers coordinates = List.map (\(lat, lng) -> Marker.init lat lng) coordinates
 
+-- Trace a closed path where the first and last points are connected                      
 tracePath : List (Float, Float) -> Polygon Msg
 tracePath coordinates = 
     Polygon.init coordinates
@@ -81,8 +82,7 @@ tracePath coordinates =
 
 view : Model -> Html Msg
 view model =
-    let d0 = 0
-    in div [class "map-container", style "height" "400px"]
+    div [class "map-container", style "height" "400px"]
         [
         googleMapView model,
         -- Keep track of changes to input fields
