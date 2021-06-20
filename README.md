@@ -24,7 +24,7 @@ Setting up Elm was not difficult, however details such as passing environment va
 
 The algorithm used is Nearest Neighbour with the first coordinate point in a list being the starting position. Additional improvement would be use is Nearest Fragment but the approach can still result in suboptimal solutions. I have attempted to implement Christofides and Serdyukov algorithm but got stuck on finding minimum-weight perfect matching which would take me much more considerable time to understand and implement it.
 
-The distance is measured in terms of Euclidean distance which assumes that points are on the same plane. So better approach would be to calculate distance using haversine algorithm
+The distance is measured in terms of Euclidean distance which assumes that points are on the same plane. So better approach would be to calculate distance using haversine algorithm.
 
 ## Below is the walkthrough as I implemented the Elm application
 
